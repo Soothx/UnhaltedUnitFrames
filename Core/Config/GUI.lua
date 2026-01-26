@@ -404,21 +404,33 @@ local function CreateColourSettings(containerParent)
 
     local ResetAllColoursButton = AG:Create("Button")
     ResetAllColoursButton:SetText("All Colours")
-    ResetAllColoursButton:SetCallback("OnClick", function() UUF:CopyTabe(UUF:GetDefaultDB().profile.General.Colours, UUF.db.profile.General.Colours) Container:ReleaseChildren() CreateColourSettings(containerParent) Container:DoLayout() containerParent:DoLayout() end)
-    ResetAllColoursButton:SetRelativeWidth(0.33)
+    ResetAllColoursButton:SetCallback("OnClick", function() UUF:CopyTable(UUF:GetDefaultDB().profile.General.Colours, UUF.db.profile.General.Colours) Container:ReleaseChildren() CreateColourSettings(containerParent) Container:DoLayout() containerParent:DoLayout() end)
+    ResetAllColoursButton:SetRelativeWidth(1)
     Container:AddChild(ResetAllColoursButton)
 
     local ResetPowerColoursButton = AG:Create("Button")
     ResetPowerColoursButton:SetText("Power Colours")
-    ResetPowerColoursButton:SetCallback("OnClick", function() UUF:CopyTabe(UUF:GetDefaultDB().profile.General.Colours.Power, UUF.db.profile.General.Colours.Power) Container:ReleaseChildren() CreateColourSettings(containerParent) Container:DoLayout() containerParent:DoLayout() end)
-    ResetPowerColoursButton:SetRelativeWidth(0.33)
+    ResetPowerColoursButton:SetCallback("OnClick", function() UUF:CopyTable(UUF:GetDefaultDB().profile.General.Colours.Power, UUF.db.profile.General.Colours.Power) Container:ReleaseChildren() CreateColourSettings(containerParent) Container:DoLayout() containerParent:DoLayout() end)
+    ResetPowerColoursButton:SetRelativeWidth(0.25)
     Container:AddChild(ResetPowerColoursButton)
+
+    local ResetSecondaryPowerColoursButton = AG:Create("Button")
+    ResetSecondaryPowerColoursButton:SetText("Secondary Power Colours")
+    ResetSecondaryPowerColoursButton:SetCallback("OnClick", function() UUF:CopyTable(UUF:GetDefaultDB().profile.General.Colours.SecondaryPower, UUF.db.profile.General.Colours.SecondaryPower) Container:ReleaseChildren() CreateColourSettings(containerParent) Container:DoLayout() containerParent:DoLayout() end)
+    ResetSecondaryPowerColoursButton:SetRelativeWidth(0.25)
+    Container:AddChild(ResetSecondaryPowerColoursButton)
 
     local ResetReactionColoursButton = AG:Create("Button")
     ResetReactionColoursButton:SetText("Reaction Colours")
-    ResetReactionColoursButton:SetCallback("OnClick", function() UUF:CopyTabe(UUF:GetDefaultDB().profile.General.Colours.Reaction, UUF.db.profile.General.Colours.Reaction) Container:ReleaseChildren() CreateColourSettings(containerParent) Container:DoLayout() containerParent:DoLayout() end)
-    ResetReactionColoursButton:SetRelativeWidth(0.33)
+    ResetReactionColoursButton:SetCallback("OnClick", function() UUF:CopyTable(UUF:GetDefaultDB().profile.General.Colours.Reaction, UUF.db.profile.General.Colours.Reaction) Container:ReleaseChildren() CreateColourSettings(containerParent) Container:DoLayout() containerParent:DoLayout() end)
+    ResetReactionColoursButton:SetRelativeWidth(0.25)
     Container:AddChild(ResetReactionColoursButton)
+
+    local ResetDispelColoursButton = AG:Create("Button")
+    ResetDispelColoursButton:SetText("Dispel Colours")
+    ResetDispelColoursButton:SetCallback("OnClick", function() UUF:CopyTable(UUF:GetDefaultDB().profile.General.Colours.Dispel, UUF.db.profile.General.Colours.Dispel) Container:ReleaseChildren() CreateColourSettings(containerParent) Container:DoLayout() containerParent:DoLayout() end)
+    ResetDispelColoursButton:SetRelativeWidth(0.25)
+    Container:AddChild(ResetDispelColoursButton)
 
     GUIWidgets.CreateHeader(Container, "Power")
 
@@ -593,21 +605,23 @@ local function CreateFrameSettings(containerParent, unit, unitHasParent, updateC
     ColourWhenTappedToggle:SetLabel("Colour When Tapped")
     ColourWhenTappedToggle:SetValue(HealthBarDB.ColourWhenTapped)
     ColourWhenTappedToggle:SetCallback("OnValueChanged", function(_, _, value) HealthBarDB.ColourWhenTapped = value updateCallback() end)
-    ColourWhenTappedToggle:SetRelativeWidth((unit == "player" or unit == "target") and 0.25 or 0.33)
+    ColourWhenTappedToggle:SetRelativeWidth(((unit == "player" or unit == "target") and 0.25) or (unit ~= "focus" and 0.5) or 0.33)
     ColourContainer:AddChild(ColourWhenTappedToggle)
 
-    local ColourByDispelTypeToggle = AG:Create("CheckBox")
-    ColourByDispelTypeToggle:SetLabel("Colour by Dispel Type")
-    ColourByDispelTypeToggle:SetValue(HealthBarDB.ColourByDispelType)
-    ColourByDispelTypeToggle:SetCallback("OnValueChanged", function(_, _, value) HealthBarDB.ColourByDispelType = value updateCallback() end)
-    ColourByDispelTypeToggle:SetRelativeWidth((unit == "player" or unit == "target") and 0.25 or 0.33)
-    ColourContainer:AddChild(ColourByDispelTypeToggle)
+    if unit == "player" or unit == "target" or unit == "focus" then
+        local ColourByDispelTypeToggle = AG:Create("CheckBox")
+        ColourByDispelTypeToggle:SetLabel("Colour by Dispel Type")
+        ColourByDispelTypeToggle:SetValue(HealthBarDB.ColourByDispelType)
+        ColourByDispelTypeToggle:SetCallback("OnValueChanged", function(_, _, value) HealthBarDB.ColourByDispelType = value updateCallback() end)
+        ColourByDispelTypeToggle:SetRelativeWidth(((unit == "player" or unit == "target") and 0.25) or 0.33)
+        ColourContainer:AddChild(ColourByDispelTypeToggle)
+    end
 
     local InverseGrowthDirectionToggle = AG:Create("CheckBox")
     InverseGrowthDirectionToggle:SetLabel("Inverse Growth Direction")
     InverseGrowthDirectionToggle:SetValue(HealthBarDB.Inverse)
     InverseGrowthDirectionToggle:SetCallback("OnValueChanged", function(_, _, value) HealthBarDB.Inverse = value updateCallback() end)
-    InverseGrowthDirectionToggle:SetRelativeWidth((unit == "player" or unit == "target") and 0.25 or 0.33)
+    InverseGrowthDirectionToggle:SetRelativeWidth(((unit == "player" or unit == "target") and 0.25) or (unit ~= "focus" and 0.5) or 0.33)
     ColourContainer:AddChild(InverseGrowthDirectionToggle)
 
     if unit == "player" or unit == "target" then

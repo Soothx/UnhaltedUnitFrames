@@ -15,7 +15,7 @@ function UUF:CreateUnitFrame(unitFrame, unit)
     UUF:CreateUnitContainer(unitFrame, unit)
     if normalizedUnit ~= "targettarget" and normalizedUnit ~= "focustarget" then UUF:CreateUnitCastBar(unitFrame, unit) end
     UUF:CreateUnitHealthBar(unitFrame, unit)
-    UUF:CreateUnitDispelHighlight(unitFrame, unit)
+    if unit == "player" or unit == "target" or unit == "focus" then UUF:CreateUnitDispelHighlight(unitFrame, unit) end
     UUF:CreateUnitHealPrediction(unitFrame, unit)
     if normalizedUnit ~= "targettarget" and normalizedUnit ~= "focustarget" then UUF:CreateUnitPortrait(unitFrame, unit) end
     UUF:CreateUnitPowerBar(unitFrame, unit)
@@ -25,7 +25,7 @@ function UUF:CreateUnitFrame(unitFrame, unit)
     if unit == "player" or unit == "target" then UUF:CreateUnitLeaderAssistantIndicator(unitFrame, unit) end
     if unit == "player" or unit == "target" then UUF:CreateUnitCombatIndicator(unitFrame, unit) end
     if unit == "player" then UUF:CreateUnitRestingIndicator(unitFrame, unit) end
-    if unit == "player" then UUF:CreateUnitTotems(unitFrame, unit) end
+    -- if unit == "player" then UUF:CreateUnitTotems(unitFrame, unit) end
     UUF:CreateUnitMouseoverIndicator(unitFrame, unit)
     UUF:CreateUnitTargetGlowIndicator(unitFrame, unit)
     UUF:CreateUnitAuras(unitFrame, unit)
@@ -72,17 +72,6 @@ function UUF:LayoutBossFrames()
     if layoutConfig.isCenter then offsetY = offsetY - (frameHeight / 2) end
     local initialAnchor = AnchorUtil.CreateAnchor(layoutConfig.anchor, UIParent, Frame.Layout[2], Frame.Layout[3], Frame.Layout[4] + offsetY)
     AnchorUtil.VerticalLayout(bossFrames, initialAnchor, Frame.Layout[5])
-end
-
-function UUF:SpawnBossUnitFrames()
-    for i = 1, UUF.MAX_BOSS_FRAMES do
-        local BossFrame = oUF:Spawn("boss" .. i, UUF:FetchFrameName("boss" .. i))
-        BossFrame:SetSize(UUF.db.profile.Units.boss.Frame.Width, UUF.db.profile.Units.boss.Frame.Height)
-        UUF.BOSS_FRAMES[i] = BossFrame
-        UUF["BOSS" .. i] = BossFrame
-        -- UUF:RegisterRangeFrame(UUF:FetchFrameName("boss" .. i), "boss" .. i)
-    end
-    UUF:LayoutBossFrames()
 end
 
 function UUF:SpawnUnitFrame(unit)
@@ -190,7 +179,7 @@ function UUF:UpdateUnitFrame(unitFrame, unit)
     if unit == "player" or unit == "target" then UUF:UpdateUnitLeaderAssistantIndicator(unitFrame, unit) end
     if unit == "player" or unit == "target" then UUF:UpdateUnitCombatIndicator(unitFrame, unit) end
     if unit == "player" then UUF:UpdateUnitRestingIndicator(unitFrame, unit) end
-    if unit == "player" then UUF:UpdateUnitTotems(unitFrame, unit) end
+    -- if unit == "player" then UUF:UpdateUnitTotems(unitFrame, unit) end
     UUF:UpdateUnitMouseoverIndicator(unitFrame, unit)
     UUF:UpdateUnitTargetGlowIndicator(unitFrame, unit)
     UUF:UpdateUnitAuras(unitFrame, unit)

@@ -15,8 +15,6 @@ function UUF:CreateUnitCastBar(unitFrame, unit)
     local CastBarDB = UUF.db.profile.Units[UUF:GetNormalizedUnit(unit)].CastBar
     local SpellNameDB = UUF.db.profile.Units[UUF:GetNormalizedUnit(unit)].CastBar.Text.SpellName
     local DurationDB = UUF.db.profile.Units[UUF:GetNormalizedUnit(unit)].CastBar.Text.Duration
-
-    -- Use frame name for unique child frame names (handles party1, party2, etc.)
     local frameName = unitFrame:GetName() or UUF:FetchFrameName(unit)
 
     local CastBarContainer = CreateFrame("Frame", frameName .. "_CastBarContainer", unitFrame, "BackdropTemplate")
@@ -125,7 +123,6 @@ function UUF:CreateUnitCastBar(unitFrame, unit)
         unitFrame.Castbar.Time = DurationText
         if CastBarDB.Icon.Enabled then unitFrame.Castbar.Icon = CastBar.Icon else unitFrame.Castbar.Icon = nil end
         
-        -- Show container when castbar is shown (oUF shows the castbar, we need to show our container)
         unitFrame.Castbar:HookScript("OnShow", function(self)
             local container = self:GetParent()
             if container then container:Show() end
@@ -171,8 +168,6 @@ function UUF:UpdateUnitCastBar(unitFrame, unit)
     local GeneralDB = UUF.db.profile.General
     local FrameDB = UUF.db.profile.Units[UUF:GetNormalizedUnit(unit)].Frame
     local CastBarDB = UUF.db.profile.Units[UUF:GetNormalizedUnit(unit)].CastBar
-
-    -- Use frame name for unique child frame names (handles party1, party2, etc.)
     local frameName = unitFrame:GetName() or UUF:FetchFrameName(unit)
 
     if CastBarDB.Enabled then

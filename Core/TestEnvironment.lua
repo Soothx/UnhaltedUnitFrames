@@ -47,7 +47,6 @@ for i = 1, 10 do
     }
 end
 
--- Simple test data for visual variety on health/power bars
 local PartyTestData = {
     [1] = { healthPercent = 0.92, powerPercent = 0.88 },
     [2] = { healthPercent = 0.84, powerPercent = 0.76 },
@@ -390,7 +389,6 @@ function UUF:CreateTestPartyFrames()
     local PartyDB = UUF.db.profile.Units.party
     local HidePlayer = PartyDB.HidePlayer
 
-    -- Helper to get the unit for a given frame index
     local function GetDefaultPartyUnit(frameIndex)
         if not HidePlayer and frameIndex == 1 then
             return "player"
@@ -421,7 +419,6 @@ function UUF:CreateTestPartyFrames()
                 PartyFrame:UpdateAllElements("RefreshUnit")
             end
 
-            -- Set fake class colour
             if PartyFrame.Health then
                 local maxHealth = UnitHealthMax("player")
                 local fakeHealth = maxHealth * data.healthPercent
@@ -444,13 +441,12 @@ function UUF:CreateTestPartyFrames()
             end
         end
     else
-        -- Exiting test mode: restore units and force oUF to refresh
         for i, PartyFrame in ipairs(UUF.PARTY_FRAMES) do
             local unit = GetDefaultPartyUnit(i)
             PartyFrame:SetAttribute("unit", unit)
             RegisterUnitWatch(PartyFrame)
             PartyFrame:Hide()
-            -- Force oUF to refresh the frame when it next shows
+
             if PartyFrame.UpdateAllElements then
                 PartyFrame:UpdateAllElements("RefreshUnit")
             end

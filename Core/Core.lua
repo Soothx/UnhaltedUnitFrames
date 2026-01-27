@@ -21,7 +21,6 @@ function UnhaltedUnitFrames:OnInitialize()
     playerSpecalizationChangedEventFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     playerSpecalizationChangedEventFrame:SetScript("OnEvent", function(_, event, ...) if event == "PLAYER_SPECIALIZATION_CHANGED" then local unit = ... if unit == "player" then UUF:UpdateAllUnitFrames() end end end)
 
-    -- Re-sort party frames when group composition or roles change
     local groupUpdateEventFrame = CreateFrame("Frame")
     groupUpdateEventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     groupUpdateEventFrame:RegisterEvent("PLAYER_ROLES_ASSIGNED")

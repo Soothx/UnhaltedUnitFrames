@@ -97,7 +97,6 @@ function UUF:SpawnUnitFrame(unit)
     elseif unit == "party" then
         local HidePlayer = UnitDB.HidePlayer
         for i = 1, UUF.MAX_PARTY_MEMBERS do
-            -- When HidePlayer is false, frame 1 = player, frame 2 = party1, etc.
             local spawnUnit
             if not HidePlayer and i == 1 then
                 spawnUnit = "player"

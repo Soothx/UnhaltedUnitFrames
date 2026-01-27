@@ -60,6 +60,25 @@ UUF.StatusTextures = {
         ["RESTING7"] = "Interface\\AddOns\\UnhaltedUnitFrames\\Media\\Textures\\Status\\Resting\\Resting7.tga",
         ["RESTING8"] = "Interface\\AddOns\\UnhaltedUnitFrames\\Media\\Textures\\Status\\Resting\\Resting8.png",
     },
+    GroupRole = {
+        ["DEFAULT"] = {
+            path = "Interface\\FrameGeneral\\UIFrameRoleIcons",
+            coords = {
+                -- { left, right, top, bottom }
+                DAMAGER = { 0,      32/128, 0/32, 32/32 },
+                HEALER  = { 32/128, 64/128, 0/32, 32/32 },
+                TANK    = { 66/128, 98/128, 0/32, 32/32 },
+            },
+        },
+        ["GROUPROLE0"] = {
+            path = "Interface\\LFGFrame\\RoleIcons",
+            coords = {
+                DAMAGER = { 0/64,  18/64, 1/32,   19/32 },
+                HEALER  = { 18/64, 36/64, 1/32,   19/32 },
+                TANK    = { 36/64, 54/64, 1/32,   19/32 },
+            },
+        },
+    },
 }
 
 function UUF:PrettyPrint(MSG) print(UUF.ADDON_NAME .. ":|r " .. MSG) end

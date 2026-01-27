@@ -1341,6 +1341,17 @@ local Defaults = {
                         Size = 20,
                         Layout = {"CENTER", "TOP", 0, 0},
                     },
+                    LeaderAssistantIndicator = {
+                        Enabled = true,
+                        Size = 16,
+                        Layout = {"TOPLEFT", "TOPLEFT", 3, -3},
+                    },
+                    GroupRole = {
+                        Enabled = true,
+                        Size = 16,
+                        Layout = {"TOPRIGHT", "TOPRIGHT", -3, -3},
+                        Texture = "DEFAULT",
+                    },
                     Mouseover = {
                         Enabled = true,
                         Colour = {1, 1, 1},

@@ -101,7 +101,13 @@ local StatusTextures = {
         ["RESTING6"] = "|TInterface\\AddOns\\UnhaltedUnitFrames\\Media\\Textures\\Status\\Resting\\Resting6.tga:18:18|t",
         ["RESTING7"] = "|TInterface\\AddOns\\UnhaltedUnitFrames\\Media\\Textures\\Status\\Resting\\Resting7.tga:18:18|t",
         ["RESTING8"] = "|TInterface\\AddOns\\UnhaltedUnitFrames\\Media\\Textures\\Status\\Resting\\Resting8.png:18:18|t",
+    },
+
+    GroupRole = {
+        ["DEFAULT"] = "|TInterface\\FrameGeneral\\UIFrameRoleIcons:20:60:0:0:128:32:0:96:0:30|t",
+        ["GROUPROLE0"] = "|TInterface\\LFGFrame\\RoleIcons:20:60:0:0:64:32:0:55:0:18|t",
     }
+    
 }
 
 local function EnableAurasTestMode(unit)
@@ -125,21 +131,25 @@ local function DisableCastBarTestMode(unit)
 end
 
 local function EnableBossFramesTestMode()
+    if UUF.BOSS_TEST_MODE == true then return end
     UUF.BOSS_TEST_MODE = true
     UUF:CreateTestBossFrames()
 end
 
 local function DisableBossFramesTestMode()
+    if UUF.BOSS_TEST_MODE == false then return end
     UUF.BOSS_TEST_MODE = false
     UUF:CreateTestBossFrames()
 end
 
 local function EnablePartyFramesTestMode()
+    if UUF.PARTY_TEST_MODE == true then return end
     UUF.PARTY_TEST_MODE = true
     UUF:CreateTestPartyFrames()
 end
 
 local function DisablePartyFramesTestMode()
+    if UUF.PARTY_TEST_MODE == false then return end
     UUF.PARTY_TEST_MODE = false
     UUF:CreateTestPartyFrames()
 end
@@ -1673,7 +1683,7 @@ local function CreateRaidTargetMarkerSettings(containerParent, unit, updateCallb
     RefreshStatusGUI()
 end
 
-local function CreateLeaderAssistaintSettings(containerParent, unit, updateCallback)
+local function CreateLeaderAssistantSettings(containerParent, unit, updateCallback)
     local LeaderAssistantDB = UUF.db.profile.Units[unit].Indicators.LeaderAssistantIndicator
 
     local ToggleContainer = GUIWidgets.CreateInlineGroup(containerParent, "Leader & Assistant Settings")
@@ -1740,7 +1750,74 @@ local function CreateLeaderAssistaintSettings(containerParent, unit, updateCallb
     RefreshStatusGUI()
 end
 
-local function CreateStatusSettings(containerParent, unit, statusDB, updateCallback)
+local function CreateGroupRoleIndicatorSettings(containerParent, unit, updateCallback)
+    local GroupRoleIndicatorDB = UUF.db.profile.Units[unit].Indicators.GroupRole
+
+    local ToggleContainer = GUIWidgets.CreateInlineGroup(containerParent, "Group Role Indicator Settings")
+
+    local Toggle = AG:Create("CheckBox")
+    Toggle:SetLabel("Enable |cFF8080FFGroup Role|r Indicator")
+    Toggle:SetValue(GroupRoleIndicatorDB.Enabled)
+    Toggle:SetCallback("OnValueChanged", function(_, _, value) GroupRoleIndicatorDB.Enabled = value updateCallback() RefreshStatusGUI() end)
+    Toggle:SetRelativeWidth(1)
+    ToggleContainer:AddChild(Toggle)
+
+    local LayoutContainer = GUIWidgets.CreateInlineGroup(containerParent, "Layout & Positioning")
+
+    local AnchorFromDropdown = AG:Create("Dropdown")
+    AnchorFromDropdown:SetList(AnchorPoints[1], AnchorPoints[2])
+    AnchorFromDropdown:SetLabel("Anchor From")
+    AnchorFromDropdown:SetValue(GroupRoleIndicatorDB.Layout[1])
+    AnchorFromDropdown:SetRelativeWidth(0.5)
+    AnchorFromDropdown:SetCallback("OnValueChanged", function(_, _, value) GroupRoleIndicatorDB.Layout[1] = value updateCallback() end)
+    LayoutContainer:AddChild(AnchorFromDropdown)
+
+    local AnchorToDropdown = AG:Create("Dropdown")
+    AnchorToDropdown:SetList(AnchorPoints[1], AnchorPoints[2])
+    AnchorToDropdown:SetLabel("Anchor To")
+    AnchorToDropdown:SetValue(GroupRoleIndicatorDB.Layout[2])
+    AnchorToDropdown:SetRelativeWidth(0.5)
+    AnchorToDropdown:SetCallback("OnValueChanged", function(_, _, value) GroupRoleIndicatorDB.Layout[2] = value updateCallback() end)
+    LayoutContainer:AddChild(AnchorToDropdown)
+
+    local XPosSlider = AG:Create("Slider")
+    XPosSlider:SetLabel("X Position")
+    XPosSlider:SetValue(GroupRoleIndicatorDB.Layout[3])
+    XPosSlider:SetSliderValues(-1000, 1000, 0.1)
+    XPosSlider:SetRelativeWidth(0.33)
+    XPosSlider:SetCallback("OnValueChanged", function(_, _, value) GroupRoleIndicatorDB.Layout[3] = value updateCallback() end)
+    LayoutContainer:AddChild(XPosSlider)
+
+    local YPosSlider = AG:Create("Slider")
+    YPosSlider:SetLabel("Y Position")
+    YPosSlider:SetValue(GroupRoleIndicatorDB.Layout[4])
+    YPosSlider:SetSliderValues(-1000, 1000, 0.1)
+    YPosSlider:SetRelativeWidth(0.33)
+    YPosSlider:SetCallback("OnValueChanged", function(_, _, value) GroupRoleIndicatorDB.Layout[4] = value updateCallback() end)
+    LayoutContainer:AddChild(YPosSlider)
+
+    local SizeSlider = AG:Create("Slider")
+    SizeSlider:SetLabel("Size")
+    SizeSlider:SetValue(GroupRoleIndicatorDB.Size)
+    SizeSlider:SetSliderValues(8, 64, 1)
+    SizeSlider:SetRelativeWidth(0.33)
+    SizeSlider:SetCallback("OnValueChanged", function(_, _, value) GroupRoleIndicatorDB.Size = value updateCallback() end)
+    LayoutContainer:AddChild(SizeSlider)
+
+    function RefreshStatusGUI()
+        if GroupRoleIndicatorDB.Enabled then
+            GUIWidgets.DeepDisable(ToggleContainer, false, Toggle)
+            GUIWidgets.DeepDisable(LayoutContainer, false, Toggle)
+        else
+            GUIWidgets.DeepDisable(ToggleContainer, true, Toggle)
+            GUIWidgets.DeepDisable(LayoutContainer, true, Toggle)
+        end
+    end
+
+    RefreshStatusGUI()
+end
+
+local function CreateStatusSettings(containerParent, unit, statusDB, statusTitle, updateCallback)
     local StatusDB = UUF.db.profile.Units[unit].Indicators[statusDB]
 
     local ToggleContainer = GUIWidgets.CreateInlineGroup(containerParent, statusDB .. " Settings")
@@ -1751,7 +1828,7 @@ local function CreateStatusSettings(containerParent, unit, statusDB, updateCallb
     end
 
     local Toggle = AG:Create("CheckBox")
-    Toggle:SetLabel("Enable |cFF8080FF"..statusDB.."|r Indicator")
+    Toggle:SetLabel("Enable |cFF8080FF"..statusTitle.."|r Indicator")
     Toggle:SetValue(StatusDB.Enabled)
     Toggle:SetCallback("OnValueChanged", function(_, _, value) StatusDB.Enabled = value updateCallback() RefreshStatusGUI() end)
     Toggle:SetRelativeWidth(0.5)
@@ -2043,12 +2120,14 @@ local function CreateIndicatorSettings(containerParent, unit)
         IndicatorContainer:ReleaseChildren()
         if IndicatorTab == "RaidTargetMarker" then
             CreateRaidTargetMarkerSettings(IndicatorContainer, unit, function() UpdateMultiFrameUnit(unit, function() UUF:UpdateUnitRaidTargetMarker(UUF[unit:upper()], unit) end) end)
+        elseif IndicatorTab == "GroupRole" then
+            CreateStatusSettings(IndicatorContainer, unit, "GroupRole", "Group Role", function() UpdateMultiFrameUnit(unit, function() UUF:UpdateUnitGroupRoleIndicator(UUF[unit:upper()], unit) end) end)
         elseif IndicatorTab == "LeaderAssistant" then
-            CreateLeaderAssistaintSettings(IndicatorContainer, unit, function() UUF:UpdateUnitLeaderAssistantIndicator(UUF[unit:upper()], unit) end)
+            CreateLeaderAssistantSettings(IndicatorContainer, unit, function() UpdateMultiFrameUnit(unit, function() UUF:UpdateUnitLeaderAssistantIndicator(UUF[unit:upper()], unit) end) end)
         elseif IndicatorTab == "Resting" then
-            CreateStatusSettings(IndicatorContainer, unit, "Resting", function() UUF:UpdateUnitRestingIndicator(UUF[unit:upper()], unit) end)
+            CreateStatusSettings(IndicatorContainer, unit, "Resting", "Resting", function() UpdateMultiFrameUnit(unit, function() UUF:UpdateUnitRestingIndicator(UUF[unit:upper()], unit) end) end)
         elseif IndicatorTab == "Combat" then
-            CreateStatusSettings(IndicatorContainer, unit, "Combat", function() UUF:UpdateUnitCombatIndicator(UUF[unit:upper()], unit) end)
+            CreateStatusSettings(IndicatorContainer, unit, "Combat", "Combat", function() UpdateMultiFrameUnit(unit, function() UUF:UpdateUnitCombatIndicator(UUF[unit:upper()], unit) end) end)
         elseif IndicatorTab == "Mouseover" then
             CreateMouseoverSettings(IndicatorContainer, unit, function() UpdateMultiFrameUnit(unit, function() UUF:UpdateUnitMouseoverIndicator(UUF[unit:upper()], unit) end) end)
         elseif IndicatorTab == "TargetIndicator" then
@@ -2081,6 +2160,8 @@ local function CreateIndicatorSettings(containerParent, unit)
     elseif unit == "party" then
         IndicatorContainerTabGroup:SetTabs({
             { text = "Raid Target Marker", value = "RaidTargetMarker" },
+            { text = "Leader & Assistant", value = "LeaderAssistant" },
+            { text = "Group Role", value = "GroupRole" },
             { text = "Mouseover", value = "Mouseover" },
             { text = "Target Indicator", value = "TargetIndicator" },
         })
@@ -2707,7 +2788,6 @@ local function CreateUnitSettings(containerParent, unit)
         HidePlayerToggle:SetValue(UUF.db.profile.Units[unit].HidePlayer)
         HidePlayerToggle:SetCallback("OnValueChanged", function(_, _, value)
             UUF.db.profile.Units[unit].HidePlayer = value
-            UUF:CreateTestPartyFrames()
             UUF:LayoutPartyFrames()
         end)
         HidePlayerToggle:SetRelativeWidth(0.5)
@@ -2717,12 +2797,11 @@ local function CreateUnitSettings(containerParent, unit)
         SortOrderDropdown:SetLabel("Sort Order")
         SortOrderDropdown:SetList({
             ["DEFAULT"] = "Default",
-            ["ROLE"] = "By Role (Tank > Healer > DPS)",
+            ["ROLE"] = "By Role (Tank > Healer > DPS)"
         })
         SortOrderDropdown:SetValue(UUF.db.profile.Units[unit].SortOrder or "DEFAULT")
         SortOrderDropdown:SetCallback("OnValueChanged", function(_, _, value)
             UUF.db.profile.Units[unit].SortOrder = value
-            UUF:CreateTestPartyFrames()
             UUF:LayoutPartyFrames()
         end)
         SortOrderDropdown:SetRelativeWidth(0.5)
@@ -3221,7 +3300,10 @@ function UUF:CreateGUI()
 
             ScrollFrame:DoLayout()
         end
-        if MainTab == "Boss" then EnableBossFramesTestMode() elseif MainTab == "Party" then EnablePartyFramesTestMode() else DisableBossFramesTestMode() DisablePartyFramesTestMode() end
+        if MainTab == "Boss" then EnableBossFramesTestMode()
+        else DisableBossFramesTestMode() end
+        if MainTab == "Party" then EnablePartyFramesTestMode()
+        else DisablePartyFramesTestMode() end
         GenerateSupportText(Container)
     end
 

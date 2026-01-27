@@ -22,7 +22,8 @@ function UUF:CreateUnitFrame(unitFrame, unit)
     if unit == "player" and UUF:RequiresAlternativePowerBar() then UUF:CreateUnitAlternativePowerBar(unitFrame, unit) end
     if unit == "player" then UUF:CreateUnitSecondaryPowerBar(unitFrame, unit) end
     UUF:CreateUnitRaidTargetMarker(unitFrame, unit)
-    if unit == "player" or unit == "target" then UUF:CreateUnitLeaderAssistantIndicator(unitFrame, unit) end
+    if unit == "player" or unit == "target" or normalizedUnit == "party" then UUF:CreateUnitLeaderAssistantIndicator(unitFrame, unit) end
+    if normalizedUnit == "party" then UUF:CreateUnitGroupRoleIndicator(unitFrame, unit) end
     if unit == "player" or unit == "target" then UUF:CreateUnitCombatIndicator(unitFrame, unit) end
     if unit == "player" then UUF:CreateUnitRestingIndicator(unitFrame, unit) end
     -- if unit == "player" then UUF:CreateUnitTotems(unitFrame, unit) end
@@ -34,20 +35,35 @@ function UUF:CreateUnitFrame(unitFrame, unit)
     return unitFrame
 end
 
+local RoleSortOrder = { TANK = 1, HEALER = 2, DAMAGER = 3, NONE = 4 }
+
+local function SortPartyFramesByRole(a, b)
+    local roleA = UnitGroupRolesAssigned(a.unit) or "NONE"
+    local roleB = UnitGroupRolesAssigned(b.unit) or "NONE"
+    return RoleSortOrder[roleA] < RoleSortOrder[roleB]
+end
+
 function UUF:LayoutPartyFrames()
-    local Frame = UUF.db.profile.Units.party.Frame
+    local PartyDB = UUF.db.profile.Units.party
+    local Frame = PartyDB.Frame
     if #UUF.PARTY_FRAMES == 0 then return end
-    
+
     local partyFrames = {}
     for i = 1, #UUF.PARTY_FRAMES do
         partyFrames[i] = UUF.PARTY_FRAMES[i]
     end
-    
+
     if Frame.GrowthDirection == "UP" then
         local reversed = {}
         for i = #partyFrames, 1, -1 do reversed[#reversed+1] = partyFrames[i] end
         partyFrames = reversed
     end
+
+    local sortOrder = PartyDB.SortOrder or "DEFAULT"
+    if sortOrder == "ROLE" then
+        table.sort(partyFrames, SortPartyFramesByRole)
+    end
+
     local layoutConfig = UUF.LayoutConfig[Frame.Layout[1]]
     local frameHeight = partyFrames[1]:GetHeight()
     local containerHeight = (frameHeight + Frame.Layout[5]) * #partyFrames - Frame.Layout[5]
@@ -109,6 +125,8 @@ function UUF:SpawnUnitFrame(unit)
             UUF.PARTY_FRAMES[i] = UUF[unit:upper() .. i]
             UUF:RegisterTargetGlowIndicatorFrame(UUF:FetchFrameName(unit .. i), unit .. i)
             UUF[unit:upper() .. i]:SetFrameStrata(FrameDB.FrameStrata)
+            if spawnUnit == "player" then UUF:RegisterDispelHighlightEvents(UUF[unit:upper() .. i], spawnUnit)
+            else UUF:RegisterDispelHighlightEvents(UUF[unit:upper() .. i], "party" .. (i - 1)) end
         end
         UUF:LayoutPartyFrames()
     else
@@ -175,7 +193,8 @@ function UUF:UpdateUnitFrame(unitFrame, unit)
     if unit == "player" then UUF:UpdateUnitAlternativePowerBar(unitFrame, unit) end
     if unit == "player" then UUF:UpdateUnitSecondaryPowerBar(unitFrame, unit) end
     UUF:UpdateUnitRaidTargetMarker(unitFrame, unit)
-    if unit == "player" or unit == "target" then UUF:UpdateUnitLeaderAssistantIndicator(unitFrame, unit) end
+    if unit == "player" or unit == "target" or normalizedUnit == "party" then UUF:UpdateUnitLeaderAssistantIndicator(unitFrame, unit) end
+    if normalizedUnit == "party" then UUF:UpdateUnitGroupRoleIndicator(unitFrame, unit) end
     if unit == "player" or unit == "target" then UUF:UpdateUnitCombatIndicator(unitFrame, unit) end
     if unit == "player" then UUF:UpdateUnitRestingIndicator(unitFrame, unit) end
     -- if unit == "player" then UUF:UpdateUnitTotems(unitFrame, unit) end

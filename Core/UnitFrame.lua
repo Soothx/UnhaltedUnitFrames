@@ -108,6 +108,7 @@ function UUF:SpawnUnitFrame(unit)
             UUF.BOSS_FRAMES[i] = UUF[unit:upper() .. i]
             UUF[unit:upper() .. i]:SetFrameStrata(FrameDB.FrameStrata)
             UUF:RegisterTargetGlowIndicatorFrame(UUF:FetchFrameName(unit .. i), unit .. i)
+            UUF:RegisterRangeFrame(UUF:FetchFrameName(unit .. i), unit .. i)
         end
         UUF:LayoutBossFrames()
     elseif unit == "party" then
